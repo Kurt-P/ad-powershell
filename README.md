@@ -27,7 +27,7 @@ It is currently used for counting pages printed per user. It groups by user than
 Feel free to use/modify the scripts.
 
 ##################
-#dbmigration.ps1                                                          
+#dbmigration-public.ps1                                                          
 ##################
 Description: 
 Use this script to backup and restore databases. It uses the new server 2012 SQLPS module for doing this.
