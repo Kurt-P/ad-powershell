@@ -37,7 +37,6 @@ The purpose of printparserwin2008-R2-GetPrintLogsAndSum.ps1 is to connect to a
 remote print server running Windows Server 2008 R2, and get the print logs.
 After acquiring those logs, it takes all print jobs by a user and sums the total
 amount of pages they have printed.
->>>>>>> 77bf3d33802aabb491d8d219651d86a7baad4459
 =======
 Feel free to use/modify the scripts.
 
