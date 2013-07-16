@@ -22,17 +22,17 @@ $fileName = $date + $simpleName
 
 #Log is the log to read
 $log = 'Microsoft-Windows-PrintService/Operational'
-#The event ID may have to be changed.
+#The event ID may need to be changed.
 $printLog = Get-WinEvent -LogName $log -ComputerName $server -FilterXPath "*[System[(EventID=307)]]"
 
 #The magic number of pages/print job
-[int]$magicNumber = 
+[int]$magicNumber = 50
 
-##Get all of the print logs from the print server
 Function getAllPrintLogs {
-    $functionName = '-All_logs'
     $printLogs = @()    #The print log is stroed as an array
+    $abuseUsers = @()
     
+    #We need to sort through the logs and sort out the data we want
     foreach ($logLine in $printLog) {
         #Lets create are array of awesome objects. Value on the left = column. Right value = what we are getting
         $cleanLog = New-Object -TypeName PSObject -Property @{
@@ -45,50 +45,35 @@ Function getAllPrintLogs {
         $printLogs += $cleanLog
     }
 
+    #We want a running total of the pages a user has printed
     $gdata = $printLogs | Group-Object -Property userId
 
-    $test = @()
+    #Total for all users
+    $allPrints = @()
+    #Those user who printed over the $magicNumber
+    $abusePrinters = @()
 
-    $test += foreach($item in $gdata) {
+    #Sum all pages used/user
+    $allPrints += foreach($item in $gdata) {
         $item.Group | Select -Unique userId,
         @{Name = 'PageTotal';Expression = {(($item.Group) | measure -Property pages -Sum).Sum}}
     }
 
-    ##TODO: CAN THIS BE DONE WITH A GLOBAL VAR?
-    $test | epcsv -Path "$HOME\$fileName$functionName.csv" -NoTypeInformation
-
-}
-
-##Get only the print logs that are over the $magicNumber
-Function getAbusivePrinters {
-    $functionName = '-Abuse_Report'
-    $printLogs = @()
-
-    foreach ($logLine in $printLog) {
-        if ($logLine.TimeCreated.DayOfYear -eq $today -AND [int]$logLine.Properties[7].Value -ge $magicNumber) {
-            $cleanLog = New-Object -TypeName PSobject -Property @{
-                dateTime = $logLine.TimeCreated
-                userId = $logLine.Properties[2].Value
-                documentName = $logLine.Properties[1].Value
-                printer = $logLine.Properties[4].Value
-                pages = $logLine.Properties[7].Value
-            }
-            $printLogs += $cleanLog
+    #Export the list to a CSV file
+    ##TODO: CAN THE PATH BE VAR?
+    $allPrints | epcsv -Path "$HOME\$fileName-AllPrints.csv" -NoTypeInformation
+    
+    #Sort out those users who are over the $magicNumber page limit
+    foreach ($line in $allPrints) {
+        if ($line.PageTotal -ge $magicNumber) {
+            $abusePrinters += $line
         }
     }
-    
-    $gdata = $printLogs | Group-Object -Property userId
 
-    $test = @()
-
-    $test += foreach($item in $gdata) {
-        $item.Group | Select -Unique userId,
-        @{Name = 'PageTotal';Expression = {(($item.Group) | measure -Property pages -Sum).Sum}}
-    }
-
-    $test | epcsv -Path "$HOME\$fileName$functionName.csv" -NoTypeInformation
+    #Export that this to a CSV file
+    ##TODO: CAN THE PATH BE VAR?
+    $abusePrinters | epcsv -Path "$HOME\$fileName-Abuse.csv" -NoTypeInformation
 }
 
-#UNCOMMENT FOR TESTING
+##UNCOMMENT FOR TESTING
 #getAllPrintLogs
-#getAbusivePrinters
