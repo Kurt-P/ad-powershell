@@ -54,5 +54,11 @@ enabling, and unlocking AD account.
 
 __*NOTE: Not all of the methods in this script have been tested*__
 
+#####################
+#ClearPrintQueues.ps1
+#####################
+Description: This script will clear documents in a print queue that is older 
+than `$age`. The `$age` var needs to be such that `-24 <= $age <= -1`.
+
 
 **Feel free to use/modify the scripts**
