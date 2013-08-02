@@ -59,6 +59,9 @@ __*NOTE: Not all of the methods in this script have been tested*__
 #####################
 Description: This script will clear documents in a print queue that is older 
 than `$age`. The `$age` var needs to be such that `-24 <= $age <= -1`.
+If using this script as a scheduled tast, it is best to setup the task on the 
+local machine and run it as SYSTEM. This script is proven to work on 
+Server 2008 R2 and Windows 7 SP1 (7601).
 
 
 **Feel free to use/modify the scripts**
