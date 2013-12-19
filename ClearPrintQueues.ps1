@@ -2,9 +2,11 @@
 # This script will get all print jobs older than    #
 # a set amount of hours, and delete them from the   #
 # print queue(s).                                   #
+# Tested to work on both Windows Server 2008 and	#
+# Windows Server 2008 R2.							#
 #                                                   #
 # Written by Kurt Prudhomme                         #
-# Date 07/31/2013                                   #
+# Date 12/19/2013                                   #
 #####################################################
 
 #$age should be such that -24 <= $age <= -1 (age is mesured in hours)
